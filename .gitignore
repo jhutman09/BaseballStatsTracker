@@ -21,7 +21,9 @@ build/
 !.env.example
 
 # --- Editors / OS ---
-.vscode/
+.vscode/*
+!.vscode/launch.json
+!.vscode/settings.json
 .idea/
 .DS_Store
 Thumbs.db
