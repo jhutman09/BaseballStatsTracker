@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.routers import season
+
 app = FastAPI(title="Baseball Stats Tracker")
 
 # Vite's default dev server port. Adjust/extend once the frontend exists.
@@ -18,9 +20,10 @@ def health_check():
     return {"status": "ok"}
 
 
+app.include_router(season.router)
+
 # Routers get wired up here as we build them, e.g.:
-# from app.routers import seasons, teams, players, games, stats
-# app.include_router(seasons.router)
+# from app.routers import teams, players, games, stats
 # app.include_router(teams.router)
 # app.include_router(players.router)
 # app.include_router(games.router)
