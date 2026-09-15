@@ -20,3 +20,10 @@ class SeasonRead(SeasonBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class SeasonUpdate(BaseModel):
+    name: str | None = None
+    year: int | None = None
+    start_date: date | None = None
+    end_date: date | None = None
