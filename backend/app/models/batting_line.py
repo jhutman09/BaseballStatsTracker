@@ -13,7 +13,7 @@ class BattingLine(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     game_id: Mapped[int] = mapped_column(ForeignKey("games.id"))
     player_id: Mapped[int] = mapped_column(ForeignKey("players.id"))
-    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"))  # which side they played for
+    roster_id: Mapped[int] = mapped_column(ForeignKey("rosters.id"))  # which side they played for
 
     at_bats: Mapped[int] = mapped_column(default=0)
     runs: Mapped[int] = mapped_column(default=0)
@@ -28,4 +28,4 @@ class BattingLine(Base):
 
     game: Mapped["Game"] = relationship(back_populates="batting_lines")
     player: Mapped["Player"] = relationship()
-    team: Mapped["Team"] = relationship()
+    roster: Mapped["Roster"] = relationship()

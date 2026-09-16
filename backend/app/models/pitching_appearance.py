@@ -20,7 +20,7 @@ class PitchingAppearance(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     game_id: Mapped[int] = mapped_column(ForeignKey("games.id"))
     player_id: Mapped[int] = mapped_column(ForeignKey("players.id"))
-    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"))
+    roster_id: Mapped[int] = mapped_column(ForeignKey("rosters.id"))
 
     outs_recorded: Mapped[int]
 
@@ -34,4 +34,4 @@ class PitchingAppearance(Base):
 
     game: Mapped["Game"] = relationship(back_populates="pitching_appearances")
     player: Mapped["Player"] = relationship()
-    team: Mapped["Team"] = relationship()
+    roster: Mapped["Roster"] = relationship()

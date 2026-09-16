@@ -1,23 +1,23 @@
 from pydantic import BaseModel, ConfigDict
 
 
-class TeamBase(BaseModel):
+class RosterBase(BaseModel):
     season_id: int
     club_id: int
     name: str
 
 
-class TeamCreate(TeamBase):
+class RosterCreate(RosterBase):
     pass
 
 
-class TeamRead(TeamBase):
+class RosterRead(RosterBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
 
 
-class TeamUpdate(BaseModel):
+class RosterUpdate(BaseModel):
     season_id: int | None = None
     club_id: int | None = None
     name: str | None = None

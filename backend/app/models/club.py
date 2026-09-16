@@ -10,4 +10,4 @@ class Club(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100), unique=True)
 
-    teams: Mapped[list["Team"]] = relationship(back_populates="club")
+    rosters: Mapped[list["Roster"]] = relationship(back_populates="club")

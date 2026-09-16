@@ -15,4 +15,4 @@ class Season(Base):
     start_date: Mapped[date | None]
     end_date: Mapped[date | None]
 
-    teams: Mapped[list["Team"]] = relationship(back_populates="season")
+    rosters: Mapped[list["Roster"]] = relationship(back_populates="season")

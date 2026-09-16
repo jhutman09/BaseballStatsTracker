@@ -15,4 +15,4 @@ class Player(Base):
     last_name: Mapped[str] = mapped_column(String(50))
     notes: Mapped[str | None]
 
-    rosters: Mapped[list["TeamRoster"]] = relationship(back_populates="player")
+    roster_entries: Mapped[list["RosterEntry"]] = relationship(back_populates="player")

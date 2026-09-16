@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import club, player, season, team
+from app.routers import club, player, roster, roster_entry, season
 
 app = FastAPI(title="Baseball Stats Tracker")
 
@@ -22,8 +22,9 @@ def health_check():
 
 app.include_router(club.router)
 app.include_router(player.router)
+app.include_router(roster.router)
+app.include_router(roster_entry.router)
 app.include_router(season.router)
-app.include_router(team.router)
 
 # Routers get wired up here as we build them, e.g.:
 # from app.routers import games, stats
