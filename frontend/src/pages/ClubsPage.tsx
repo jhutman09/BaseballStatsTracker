@@ -1,10 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiGet } from '../api/client'
-
-interface Club {
-  id: number
-  name: string
-}
+import type { Club } from '../api/types'
 
 export function ClubsPage() {
   const { data: clubs, isLoading, error } = useQuery({

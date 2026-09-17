@@ -1,13 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiGet } from '../api/client'
-
-interface Season {
-  id: number
-  name: string
-  year: number
-  start_date: string | null
-  end_date: string | null
-}
+import type { Season } from '../api/types'
 
 export function SeasonsPage() {
   const { data: seasons, isLoading, error } = useQuery({

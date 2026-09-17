@@ -2,6 +2,8 @@ import { Routes, Route } from 'react-router-dom'
 import { Nav } from './components/Nav'
 import { SeasonsPage } from './pages/SeasonsPage'
 import { ClubsPage } from './pages/ClubsPage'
+import { PlayersPage } from './pages/PlayersPage'
+import { RostersPage } from './pages/RostersPage'
 
 function App() {
   return (
@@ -10,6 +12,8 @@ function App() {
       <Routes>
         <Route path="/" element={<SeasonsPage />} />
         <Route path="/clubs" element={<ClubsPage />} />
+        <Route path="/players" element={<PlayersPage />} />
+        <Route path="/rosters" element={<RostersPage />} />
       </Routes>
     </>
   )
