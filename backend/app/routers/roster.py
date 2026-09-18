@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -12,7 +13,14 @@ router = APIRouter(prefix="/rosters", tags=["rosters"])
 def create_roster(roster_data: RosterCreate, db: Session = Depends(get_db)):
     roster = Roster(**roster_data.model_dump())
     db.add(roster)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail="A roster with this name, or for this club and season, already exists",
+        )
     db.refresh(roster)
     return roster
 
@@ -40,7 +48,14 @@ def update_roster(roster_id: int, roster_data: RosterUpdate, db: Session = Depen
     for field, value in updates.items():
         setattr(roster, field, value)
 
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail="A roster with this name, or for this club and season, already exists",
+        )
     db.refresh(roster)
     return roster
 
