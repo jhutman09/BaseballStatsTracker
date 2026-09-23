@@ -1,10 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from app.database import get_db
+from app.models.player import Player
 from app.models.roster import Roster
+from app.models.roster_entry import RosterEntry
 from app.schemas.roster import RosterCreate, RosterRead, RosterUpdate
+from app.schemas.roster_entry import RosterEntryWithPlayer, RosterPlayerCreate
 
 router = APIRouter(prefix="/rosters", tags=["rosters"])
 
@@ -36,6 +39,41 @@ def get_roster(roster_id: int, db: Session = Depends(get_db)):
     if roster is None:
         raise HTTPException(status_code=404, detail="Roster not found")
     return roster
+
+
+@router.get("/{roster_id}/entries", response_model=list[RosterEntryWithPlayer])
+def list_roster_entries(roster_id: int, db: Session = Depends(get_db)):
+    if db.get(Roster, roster_id) is None:
+        raise HTTPException(status_code=404, detail="Roster not found")
+    return (
+        db.query(RosterEntry)
+        .options(selectinload(RosterEntry.player))
+        .filter(RosterEntry.roster_id == roster_id)
+        .all()
+    )
+
+
+@router.post(
+    "/{roster_id}/players/bulk",
+    response_model=list[RosterEntryWithPlayer],
+    status_code=201,
+)
+def add_players_to_roster(
+    roster_id: int, players_data: list[RosterPlayerCreate], db: Session = Depends(get_db)
+):
+    if db.get(Roster, roster_id) is None:
+        raise HTTPException(status_code=404, detail="Roster not found")
+
+    entries = []
+    for data in players_data:
+        player = Player(first_name=data.first_name, last_name=data.last_name)
+        entry = RosterEntry(player=player, roster_id=roster_id, jersey_number=data.jersey_number)
+        db.add(entry)
+        entries.append(entry)
+    db.commit()
+    for entry in entries:
+        db.refresh(entry)
+    return entries
 
 
 @router.patch("/{roster_id}", response_model=RosterRead)

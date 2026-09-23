@@ -1,5 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 
+from app.schemas.player import PlayerRead
+
 
 class RosterEntryBase(BaseModel):
     player_id: int
@@ -20,4 +22,16 @@ class RosterEntryRead(RosterEntryBase):
 class RosterEntryUpdate(BaseModel):
     player_id: int | None = None
     roster_id: int | None = None
+    jersey_number: int | None = None
+
+
+class RosterEntryWithPlayer(RosterEntryRead):
+    player: PlayerRead
+
+
+class RosterPlayerCreate(BaseModel):
+    """A brand-new player to create and add to a roster in one step."""
+
+    first_name: str
+    last_name: str
     jersey_number: int | None = None
