@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiGet, apiPost } from '../api/client'
 import type { Player } from '../api/types'
@@ -7,6 +7,7 @@ export function PlayersPage() {
   const queryClient = useQueryClient()
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const firstNameRef = useRef<HTMLInputElement>(null)
 
   const { data: players, isLoading, error } = useQuery({
     queryKey: ['players'],
@@ -20,6 +21,7 @@ export function PlayersPage() {
       queryClient.invalidateQueries({ queryKey: ['players'] })
       setFirstName('')
       setLastName('')
+      firstNameRef.current?.focus()
     },
   })
 
@@ -35,6 +37,8 @@ export function PlayersPage() {
         className="flex gap-2 mb-4"
       >
         <input
+          ref={firstNameRef}
+          autoFocus
           type="text"
           placeholder="First name"
           value={firstName}
