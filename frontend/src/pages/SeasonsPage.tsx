@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiGet } from '../api/client'
 import type { Season } from '../api/types'
+import { sortByName } from '../sortByName'
 
 export function SeasonsPage() {
   const { data: seasons, isLoading, error } = useQuery({
@@ -15,7 +16,7 @@ export function SeasonsPage() {
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Seasons</h1>
       <ul className="divide-y divide-gray-200">
-        {seasons!.map((season) => (
+        {sortByName(seasons).map((season) => (
           <li key={season.id} className="py-2">
             {season.name} ({season.year})
           </li>

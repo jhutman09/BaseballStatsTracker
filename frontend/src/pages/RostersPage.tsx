@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiGet, apiPost } from '../api/client'
 import type { Roster, Season, Club } from '../api/types'
+import { sortByName } from '../sortByName'
 
 export function RostersPage() {
   const queryClient = useQueryClient()
@@ -42,10 +43,6 @@ export function RostersPage() {
     return clubs?.find((c) => c.id === clubId)?.name ?? clubId
   }
 
-  function seasonName(seasonId: number) {
-    return seasons?.find((s) => s.id === seasonId)?.name ?? seasonId
-  }
-
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Rosters</h1>
@@ -66,7 +63,7 @@ export function RostersPage() {
           <option value="" disabled>
             Season
           </option>
-          {seasons?.map((season) => (
+          {sortByName(seasons).map((season) => (
             <option key={season.id} value={season.id}>
               {season.name}
             </option>
@@ -81,7 +78,7 @@ export function RostersPage() {
           <option value="" disabled>
             Club
           </option>
-          {clubs?.map((club) => (
+          {sortByName(clubs).map((club) => (
             <option key={club.id} value={club.id}>
               {club.name}
             </option>
@@ -109,16 +106,38 @@ export function RostersPage() {
 
       {isLoading && <p>Loading rosters...</p>}
       {error && <p className="text-red-600">Failed to load rosters.</p>}
-      <ul className="divide-y divide-gray-200">
-        {rosters?.map((roster) => (
-          <li key={roster.id} className="py-2">
-            <Link to={`/rosters/${roster.id}`} className="text-blue-600 hover:underline">
-              {roster.name}
-            </Link>{' '}
-            — {clubName(roster.club_id)} ({seasonName(roster.season_id)})
-          </li>
-        ))}
-      </ul>
+      <div className="space-y-2">
+        {[...(seasons ?? [])]
+          .sort((a, b) => a.year - b.year)
+          .map((season) => {
+            const seasonRosters = (rosters ?? [])
+              .filter((r) => r.season_id === season.id)
+              .sort((a, b) => String(clubName(a.club_id)).localeCompare(String(clubName(b.club_id))))
+            return (
+              <details key={season.id} className="border rounded">
+                <summary className="cursor-pointer px-4 py-3 font-semibold flex justify-between">
+                  <span>{season.name}</span>
+                  <span className="text-gray-500 font-normal">
+                    {seasonRosters.length} roster{seasonRosters.length === 1 ? '' : 's'}
+                  </span>
+                </summary>
+                <ul className="divide-y divide-gray-200 border-t">
+                  {seasonRosters.map((roster) => (
+                    <li key={roster.id} className="px-4 py-2">
+                      <Link to={`/rosters/${roster.id}`} className="text-blue-600 hover:underline">
+                        {roster.name}
+                      </Link>{' '}
+                      — {clubName(roster.club_id)}
+                    </li>
+                  ))}
+                  {seasonRosters.length === 0 && (
+                    <li className="px-4 py-2 text-gray-500">No rosters yet.</li>
+                  )}
+                </ul>
+              </details>
+            )
+          })}
+      </div>
     </div>
   )
 }

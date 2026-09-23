@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiGet } from '../api/client'
 import type { Club } from '../api/types'
+import { sortByName } from '../sortByName'
 
 export function ClubsPage() {
   const { data: clubs, isLoading, error } = useQuery({
@@ -15,7 +16,7 @@ export function ClubsPage() {
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Clubs</h1>
       <ul className="divide-y divide-gray-200">
-        {clubs!.map((club) => (
+        {sortByName(clubs).map((club) => (
           <li key={club.id} className="py-2">
             {club.name}
           </li>
