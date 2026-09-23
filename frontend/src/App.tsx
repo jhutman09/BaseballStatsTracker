@@ -4,6 +4,7 @@ import { SeasonsPage } from './pages/SeasonsPage'
 import { ClubsPage } from './pages/ClubsPage'
 import { PlayersPage } from './pages/PlayersPage'
 import { RostersPage } from './pages/RostersPage'
+import { RosterDetailPage } from './pages/RosterDetailPage'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/clubs" element={<ClubsPage />} />
         <Route path="/players" element={<PlayersPage />} />
         <Route path="/rosters" element={<RostersPage />} />
+        <Route path="/rosters/:rosterId" element={<RosterDetailPage />} />
       </Routes>
     </>
   )

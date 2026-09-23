@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiGet, apiPost } from '../api/client'
 import type { Roster, Season, Club } from '../api/types'
@@ -111,7 +112,10 @@ export function RostersPage() {
       <ul className="divide-y divide-gray-200">
         {rosters?.map((roster) => (
           <li key={roster.id} className="py-2">
-            {roster.name} — {clubName(roster.club_id)} ({seasonName(roster.season_id)})
+            <Link to={`/rosters/${roster.id}`} className="text-blue-600 hover:underline">
+              {roster.name}
+            </Link>{' '}
+            — {clubName(roster.club_id)} ({seasonName(roster.season_id)})
           </li>
         ))}
       </ul>

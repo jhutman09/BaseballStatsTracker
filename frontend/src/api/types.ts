@@ -18,6 +18,14 @@ export interface Player {
   notes: string | null
 }
 
+export interface RosterEntryWithPlayer {
+  id: number
+  player_id: number
+  roster_id: number
+  jersey_number: number | null
+  player: Player
+}
+
 export interface Roster {
   id: number
   season_id: number
