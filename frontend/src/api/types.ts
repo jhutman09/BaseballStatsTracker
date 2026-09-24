@@ -32,3 +32,25 @@ export interface Roster {
   club_id: number
   name: string
 }
+
+export interface Game {
+  id: number
+  home_roster_id: number
+  away_roster_id: number
+  game_date: string
+  field: string | null
+  home_score: number | null
+  away_score: number | null
+  notes: string | null
+}
+
+export interface LineupEntry {
+  id: number
+  game_id: number
+  roster_id: number
+  player_id: number
+  batting_slot: number
+  position: string
+  inning_entered: number | null
+  player: Player
+}

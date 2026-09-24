@@ -15,6 +15,9 @@ export function Nav() {
       <Link to="/rosters" className="text-blue-600 hover:underline">
         Rosters
       </Link>
+      <Link to="/games" className="text-blue-600 hover:underline">
+        Games
+      </Link>
     </nav>
   )
 }

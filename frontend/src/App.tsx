@@ -5,6 +5,8 @@ import { ClubsPage } from './pages/ClubsPage'
 import { PlayersPage } from './pages/PlayersPage'
 import { RostersPage } from './pages/RostersPage'
 import { RosterDetailPage } from './pages/RosterDetailPage'
+import { GamesPage } from './pages/GamesPage'
+import { GameDetailPage } from './pages/GameDetailPage'
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
         <Route path="/players" element={<PlayersPage />} />
         <Route path="/rosters" element={<RostersPage />} />
         <Route path="/rosters/:rosterId" element={<RosterDetailPage />} />
+        <Route path="/games" element={<GamesPage />} />
+        <Route path="/games/:gameId" element={<GameDetailPage />} />
       </Routes>
     </>
   )
