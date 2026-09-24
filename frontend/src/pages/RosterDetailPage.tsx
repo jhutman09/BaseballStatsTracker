@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { apiGet, apiPost } from '../api/client'
+import { apiGet, apiPatch, apiPost } from '../api/client'
 import type { Club, Roster, RosterEntryWithPlayer, Season } from '../api/types'
 
 interface ParsedPlayer {
@@ -29,6 +29,10 @@ export function RosterDetailPage() {
   const { rosterId } = useParams()
   const queryClient = useQueryClient()
   const [bulkText, setBulkText] = useState('')
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editJersey, setEditJersey] = useState('')
+  const [editFirst, setEditFirst] = useState('')
+  const [editLast, setEditLast] = useState('')
 
   const { data: roster, isLoading, error } = useQuery({
     queryKey: ['rosters', rosterId],
@@ -73,6 +77,33 @@ export function RosterDetailPage() {
       setBulkText('')
     },
   })
+
+  const saveEdit = useMutation({
+    mutationFn: async (entry: RosterEntryWithPlayer) => {
+      const jersey = editJersey.trim() === '' ? null : Number(editJersey)
+      if (jersey !== entry.jersey_number) {
+        await apiPatch(`/roster-entries/${entry.id}`, { jersey_number: jersey })
+      }
+      const first = editFirst.trim()
+      const last = editLast.trim()
+      if (first !== entry.player.first_name || last !== entry.player.last_name) {
+        await apiPatch(`/players/${entry.player_id}`, { first_name: first, last_name: last })
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['roster-entries', rosterId] })
+      queryClient.invalidateQueries({ queryKey: ['players'] })
+      setEditingId(null)
+    },
+  })
+
+  function startEdit(entry: RosterEntryWithPlayer) {
+    setEditingId(entry.id)
+    setEditJersey(entry.jersey_number === null ? '' : String(entry.jersey_number))
+    setEditFirst(entry.player.first_name)
+    setEditLast(entry.player.last_name)
+    saveEdit.reset()
+  }
 
   if (isLoading) return <p className="p-4">Loading roster...</p>
   if (error || !roster) return <p className="p-4 text-red-600">Failed to load roster.</p>
@@ -129,14 +160,74 @@ export function RosterDetailPage() {
 
       <h2 className="text-lg font-semibold mb-2">Players ({sortedEntries.length})</h2>
       <ul className="divide-y divide-gray-200">
-        {sortedEntries.map((entry) => (
-          <li key={entry.id} className="py-2">
-            <span className="inline-block w-10 text-gray-500">
-              {entry.jersey_number !== null ? `#${entry.jersey_number}` : ''}
-            </span>
-            {entry.player.first_name} {entry.player.last_name}
-          </li>
-        ))}
+        {sortedEntries.map((entry) =>
+          editingId === entry.id ? (
+            <li key={entry.id} className="py-2">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  saveEdit.mutate(entry)
+                }}
+                className="flex flex-wrap gap-2 items-center"
+              >
+                <input
+                  type="number"
+                  min={0}
+                  step={1}
+                  placeholder="#"
+                  value={editJersey}
+                  onChange={(e) => setEditJersey(e.target.value)}
+                  className="border rounded px-2 py-1 w-16"
+                />
+                <input
+                  type="text"
+                  value={editFirst}
+                  onChange={(e) => setEditFirst(e.target.value)}
+                  className="border rounded px-2 py-1"
+                  required
+                />
+                <input
+                  type="text"
+                  value={editLast}
+                  onChange={(e) => setEditLast(e.target.value)}
+                  className="border rounded px-2 py-1"
+                  required
+                />
+                <button
+                  type="submit"
+                  disabled={saveEdit.isPending}
+                  className="bg-blue-600 text-white rounded px-3 py-1 disabled:opacity-50"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditingId(null)}
+                  className="border rounded px-3 py-1"
+                >
+                  Cancel
+                </button>
+                {saveEdit.isError && <span className="text-red-600">Failed to save.</span>}
+              </form>
+            </li>
+          ) : (
+            <li key={entry.id} className="py-2 flex items-center">
+              <span className="inline-block w-10 text-gray-500">
+                {entry.jersey_number !== null ? `#${entry.jersey_number}` : ''}
+              </span>
+              <span className="flex-1">
+                {entry.player.first_name} {entry.player.last_name}
+              </span>
+              <button
+                type="button"
+                onClick={() => startEdit(entry)}
+                className="text-blue-600 hover:underline"
+              >
+                Edit
+              </button>
+            </li>
+          ),
+        )}
       </ul>
     </div>
   )
