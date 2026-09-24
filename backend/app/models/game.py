@@ -28,3 +28,6 @@ class Game(Base):
     away_roster: Mapped["Roster"] = relationship(foreign_keys=[away_roster_id])
     batting_lines: Mapped[list["BattingLine"]] = relationship(back_populates="game")
     pitching_appearances: Mapped[list["PitchingAppearance"]] = relationship(back_populates="game")
+    lineup_entries: Mapped[list["LineupEntry"]] = relationship(
+        back_populates="game", cascade="all, delete-orphan"
+    )

@@ -5,6 +5,7 @@ from app.models.roster import Roster
 from app.models.player import Player
 from app.models.roster_entry import RosterEntry
 from app.models.game import Game
+from app.models.lineup_entry import LineupEntry
 from app.models.batting_line import BattingLine
 from app.models.pitching_appearance import PitchingAppearance
 
@@ -16,6 +17,7 @@ __all__ = [
     "Player",
     "RosterEntry",
     "Game",
+    "LineupEntry",
     "BattingLine",
     "PitchingAppearance",
 ]
